@@ -2,17 +2,25 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install system dependencies + xvfb for headed Playwright
-RUN apt-get update && apt-get install -y build-essential curl libssl-dev libffi-dev xvfb && rm -rf /var/lib/apt/lists/*
+# Install system packages
+RUN apt-get update && apt-get install -y \
+    curl build-essential libssl-dev libffi-dev xvfb \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies + Playwright
-COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt && playwright install --with-deps
+# Install uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    ln -s /root/.cargo/bin/uv /usr/local/bin/uv
 
-# Copy project files
+# Copy only dependency files
+COPY pyproject.toml uv.lock ./
+
+# Install dependencies and create .venv
+RUN uv sync
+
+# Copy the app code
 COPY . .
 
 EXPOSE 8000
 
-# Start FastAPI with headed Playwright using Render's $PORT
-CMD ["sh", "-c", "xvfb-run --auto-servernum --server-args='-screen 0 1920x1080x24' uvicorn server:app --host 0.0.0.0 --port $PORT"]
+# Activate .venv and run the app using xvfb
+CMD ["/bin/sh", "-c", ". .venv/bin/activate && xvfb-run --auto-servernum --server-args='-screen 0 1920x1080x24' uvicorn server:app --host 0.0.0.0 --port $PORT"]
