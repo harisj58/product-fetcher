@@ -16,8 +16,8 @@ COPY pyproject.toml uv.lock ./
 # Install dependencies and create .venv
 RUN uv sync
 
-# Install Playwright browsers
-RUN playwright install --with-deps
+# Activate virtual environment and install playwright browsers
+RUN .venv/bin/python -m playwright install --with-deps
 
 # Copy the app code
 COPY . .
