@@ -5,12 +5,7 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    libssl-dev \
-    libffi-dev \
-    # Add any other system dependencies here
+RUN apt-get update && apt-get install -y build-essential curl libssl-dev libffi-dev
 
 # Install pip, uvicorn, and poetry
 RUN pip install --upgrade pip uvicorn[standard] poetry
