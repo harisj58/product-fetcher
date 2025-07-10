@@ -23,4 +23,4 @@ RUN poetry install --no-root --only main
 EXPOSE 8000
 
 # Run the FastAPI app with uvicorn
-CMD ["xvfb-run", "--auto-servernum", "--server-args=-screen 0 1920x1080x24", "uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "xvfb-run --auto-servernum --server-args='-screen 0 1920x1080x24' uvicorn server:app --host 0.0.0.0 --port $PORT"]
