@@ -5,7 +5,7 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y build-essential curl libssl-dev libffi-dev
+RUN apt-get update && apt-get install -y build-essential curl libssl-dev libffi-dev xvfb && rm -rf /var/lib/apt/lists/*
 
 # Install pip, uvicorn, and poetry
 RUN pip install --upgrade pip uvicorn[standard] poetry
@@ -23,4 +23,4 @@ RUN poetry install --no-root --only main
 EXPOSE 8000
 
 # Run the FastAPI app with uvicorn
-CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["xvfb-run", "--auto-servernum", "--server-args=-screen 0 1920x1080x24", "uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
