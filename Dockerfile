@@ -3,13 +3,12 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Install system packages
-RUN apt-get update && apt-get install -y \
-    curl build-essential libssl-dev libffi-dev xvfb \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y curl build-essential libssl-dev libffi-dev xvfb && rm -rf /var/lib/apt/lists/*
 
 # Install uv
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
-    ln -s /root/.cargo/bin/uv /usr/local/bin/uv
+ENV PATH="/root/.local/bin:$PATH"
+
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Copy only dependency files
 COPY pyproject.toml uv.lock ./
